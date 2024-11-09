@@ -1,21 +1,8 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
-
-        <q-toolbar-title>
-          Quasar App
-        </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
+    <q-header elevated class="bg-white">
+      <q-toolbar class="q-px-xl q-py-xs">
+        <img src="../assets/OnflyLogo.png" width="70px">
       </q-toolbar>
     </q-header>
 
@@ -100,7 +87,4 @@ const linksList: EssentialLinkProps[] = [
 
 const leftDrawerOpen = ref(false);
 
-function toggleLeftDrawer () {
-  leftDrawerOpen.value = !leftDrawerOpen.value;
-}
 </script>
