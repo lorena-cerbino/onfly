@@ -1,0 +1,16 @@
+[
+    { "key": "WI_FI", "icon": "wifi" },
+    { "key": "AIR_CONDITIONING", "icon": "ac_unit" },
+    { "key": "POOL", "icon": "pool" },
+    { "key": "FITNESS_CENTER", "icon": "fitness_center" },
+    { "key": "RESTAURANT", "icon": "restaurant" },
+    { "key": "ROOM_SERVICE", "icon": "room_service" },
+    { "key": "PUB", "icon": "local_bar" },
+    { "key": "PETS", "icon": "pets" },
+    { "key": "SAFE", "icon": "lock" },
+    { "key": "PARKING", "icon": "local_parking" },
+    { "key": "LAUNDRY", "icon": "local_laundry_service" },
+    { "key": "BREAKFAST", "icon": "free_breakfast" },
+    { "key": "STEAM_ROOM", "icon": "hot_tub" },
+    { "key": "MEETING_ROOM", "icon": "meeting_room" }
+]
