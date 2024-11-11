@@ -4,6 +4,7 @@
 			:place="place"
 			:options="placeOptions"
 			@update:place="(p) => place = p.value"
+			:btnAction="updateHotelOptions"
 		></FilterCard>
 		<div style="width: 100%;" class="row justify-between items-center">
 			<q-breadcrumbs class="text-grey-8 text-caption" style="font-size: 12px;">
@@ -34,7 +35,7 @@
 			</div>
 		</div>
 		<HotelCard
-			v-for="(hotel, index) in getHotels(1)"
+			v-for="(hotel, index) in hotelOptions"
 			:key="index"
 			title="Hotels list"
 			:hotel="hotel"
@@ -68,6 +69,11 @@
 
 	function getHotels(placeId: number | string) {
 		return hotels.reduce((acc, item) => String(item.placeId) === String(placeId) ? item.hotels : acc, {})
+	}
+
+	const hotelOptions = ref(getHotels(1))
+	const updateHotelOptions = () => {
+		hotelOptions.value = getHotels(place.value)
 	}
 
 </script>

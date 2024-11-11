@@ -23,7 +23,7 @@
             />
 		</q-card-section>
         <q-card-actions align="right">
-            <q-btn unelevated rounded color="primary" label="Alterar busca" size="md" :loading="false" :disable="false" click="() => {}" class="q-mr-sm q-mb-sm" padding="sm xl" />
+            <q-btn unelevated rounded color="primary" label="Alterar busca" size="md" :loading="false" :disable="false" @click="btnAction" class="q-mr-sm q-mb-sm" padding="sm xl" />
         </q-card-actions>
 	</q-card>
 </template>
@@ -39,6 +39,7 @@
 	const props = defineProps<{
         place: string | number;
         options: Option[];
+        btnAction?: () => void;
     }>();
     const emit = defineEmits(['update:place']);
 	const selected = ref(props.options.find(option => option.value === props.place) || props.options[0])
