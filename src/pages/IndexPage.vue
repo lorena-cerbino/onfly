@@ -1,104 +1,76 @@
 <template>
-	<q-page class="row items-center justify-evenly">
-		<hotel-card
+	<q-page class="column items-center justify-evenly q-pa-xl container q-gutter-sm" >
+		<FilterCard
+			:place="place"
+			:options="placeOptions"
+			@update:place="(p) => place = p.value"
+		></FilterCard>
+		<div style="width: 100%;" class="row justify-between items-center">
+			<q-breadcrumbs class="text-grey-8 text-caption" style="font-size: 12px;">
+				<template v-slot:separator>
+					<q-icon
+						size="1.5em"
+						name="chevron_right"
+						style="color: #009EFB;"
+					/>
+				</template>
+				<q-breadcrumbs-el label="Início" />
+				<q-breadcrumbs-el label="Hotéis" />
+				<q-breadcrumbs-el :label="`Hospedagem em ${place}`" color="grey-8" />
+			</q-breadcrumbs>
+			<div class="text-grey-8 text-caption row q-gutter-xs items-center">
+				Organizar por
+				<q-select
+					v-model="order"
+					borderless
+					dense
+					stack-label
+					class="q-py-none q-mb-xs"
+					:options="orderOptions"
+					dropdown-icon="keyboard_arrow_down"
+					emit-value
+					map-options
+				/>
+			</div>
+		</div>
+		<HotelCard
+			v-for="(hotel, index) in getHotels(1)"
+			:key="index"
 			title="Hotels list"
-			active
-			:todos="todos"
-			:hotel="hotels[0]"
-			:meta="meta"
-		></hotel-card>
+			:hotel="hotel"
+		></HotelCard>
 	</q-page>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Todo, Meta, Hotel } from 'components/models';
-import HotelCard from 'components/HotelCard.vue';
+    import { ref } from 'vue'
+	import HotelCard from 'components/HotelCard.vue';
+	import places from '../../data/place.json'
+	import hotels from '../../data/hotel.json'
+	import FilterCard from 'components/FilterCard.vue'
 
-defineOptions({
-	name: 'IndexPage'
-});
+	defineOptions({
+		name: 'IndexPage',
+	});
 
-const todos = ref<Todo[]>([
-	{
-		id: 1,
-		content: 'ct1'
-	},
-	{
-		id: 2,
-		content: 'ct2'
-	},
-	{
-		id: 3,
-		content: 'ct3'
-	},
-	{
-		id: 4,
-		content: 'ct4'
-	},
-	{
-		id: 5,
-		content: 'ct5'
+	const place = ref<string | number>(1)
+	const order = ref('Recomendados');
+	const orderOptions = ['Recomendados', 'Melhor avaliados']
+
+	function getPlaces() {
+		return places.map((place) => ({
+			label: `${place.name}, ${place.state.shortname}`,
+			value: place.placeId
+		}))
 	}
-]);
 
-const hotels = ref<Hotel[]>([
-	{
-		id: 430,
-		favorite: true,
-		name: 'Nacional Inn Belo Horizonte',
-		description: 'Localizado no coração comercial e financeiro de Belo Horizonte, próximo aos principais centros de decisão da capital mineira, centros de convenções (Minascentro, Expominas), principais avenidas da cidade, fácil acesso as saídas e entradas para a cidade e ',
-		stars: '3',
-		thumb: 'https://s3.amazonaws.com/e-htl/uploads/hotels/10415/10415_10.JPG',
-		amenities: [
-			{
-				key: 'WI_FI',
-				label: 'Internet'
-			},
-			{
-				key: 'RESTAURANT',
-				label: 'Restaurante'
-			},
-			{
-				key: 'ROOM_SERVICE',
-				label: 'Serviço de quarto'
-			}
-		],
-		hasBreakFast: true,
-		hasRefundableRoom: true,
-		hasAgreement: false,
-		nonRefundable: null,
-		address: {
-			street: 'Rua Espírito Santo',
-			number: '215',
-			district: 'Centro',
-			city: 'Belo Horizonte',
-			state: 'MG',
-			country: 'BR',
-			zipCode: null,
-			fullAddress: 'Rua Espírito Santo, 215 - Centro'
-		},
-		images: [
-			'https://s3.amazonaws.com/e-htl/uploads/hotels/10415/10415_10.JPG',
-			'https://s3.amazonaws.com/e-htl/uploads/hotels/10415/10415_11.JPG',
-			'https://s3.amazonaws.com/e-htl/uploads/hotels/10415/10415_12.JPG',
-			'https://s3.amazonaws.com/e-htl/uploads/hotels/10415/10415_13.JPG',
-			'https://s3.amazonaws.com/e-htl/uploads/hotels/10415/10415_3.jpg',
-			'https://s3.amazonaws.com/e-htl/uploads/hotels/10415/10415_5.jpg',
-			'https://s3.amazonaws.com/e-htl/uploads/hotels/10415/10415_6.jpg',
-			'https://s3.amazonaws.com/e-htl/uploads/hotels/10415/10415_7.jpg',
-			'https://s3.amazonaws.com/e-htl/uploads/hotels/10415/10415_8.jpg',
-			'https://s3.amazonaws.com/e-htl/uploads/hotels/10415/10415_9.jpg',
-			'https://s3.amazonaws.com/e-htl/uploads/hotels/logotipos/10415.jpg'
-		],
-		deals: null,
-		roomsQuantity: 2,
-		price: 100
-	},
-])
+	const placeOptions = getPlaces()
 
-const meta = ref<Meta>({
-	totalCount: 1200
-});
+	function getHotels(placeId: number | string) {
+		return hotels.reduce((acc, item) => String(item.placeId) === String(placeId) ? item.hotels : acc, {})
+	}
+
 </script>
   
+<style>
+</style>
