@@ -1,6 +1,10 @@
 <template>
 	<q-page class="column items-center justify-evenly q-pa-xl container q-gutter-sm" >
-		<FilterCard place="" :options="getPlaces()"></FilterCard>
+		<FilterCard
+			:place="place"
+			:options="placeOptions"
+			@update:place="(p) => place = p.value"
+		></FilterCard>
 		<div style="width: 100%;" class="row justify-between items-center">
 			<q-breadcrumbs class="text-grey-8 text-caption" style="font-size: 12px;">
 				<template v-slot:separator>
@@ -17,13 +21,15 @@
 			<div class="text-grey-8 text-caption row q-gutter-xs items-center">
 				Organizar por
 				<q-select
-					:model-value="order"
+					v-model="order"
 					borderless
 					dense
 					stack-label
 					class="q-py-none q-mb-xs"
 					:options="orderOptions"
 					dropdown-icon="keyboard_arrow_down"
+					emit-value
+					map-options
 				/>
 			</div>
 		</div>
@@ -45,10 +51,9 @@
 
 	defineOptions({
 		name: 'IndexPage',
-		order: '',
 	});
 
-	const place = ref('Belo Horizonte')
+	const place = ref<string | number>(1)
 	const order = ref('Recomendados');
 	const orderOptions = ['Recomendados', 'Melhor avaliados']
 
@@ -59,6 +64,8 @@
 		}))
 	}
 
+	const placeOptions = getPlaces()
+
 	function getHotels(placeId: number | string) {
 		return hotels.reduce((acc, item) => String(item.placeId) === String(placeId) ? item.hotels : acc, {})
 	}
@@ -66,6 +73,4 @@
 </script>
   
 <style>
-	.container {
-	}
 </style>

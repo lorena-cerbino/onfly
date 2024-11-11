@@ -8,7 +8,7 @@
             <span class="text-caption text-grey-8">Destino</span>
             <span class="text-caption text-red">*</span>
             <q-select
-                :model-value="place"
+                v-model="selected"
                 outlined
                 dense
                 stack-label
@@ -17,6 +17,9 @@
                 input-debounce="0"
                 :options="options"
                 hide-dropdown-icon
+                option-value="value"
+                option-label="label"
+                @update:model-value="updateValue"
             />
 		</q-card-section>
         <q-card-actions align="right">
@@ -26,24 +29,27 @@
 </template>
 
 <script setup lang="ts">
-    import { ref } from 'vue'
+    import { ref, watch, defineProps, defineEmits } from 'vue';
 
     interface Option {
         value: number | string;
         [key: string]: unknown;
     }
 
-	interface Props {
-		place?: string;
-        options: Option[]
-	};
+	const props = defineProps<{
+        place: string | number;
+        options: Option[];
+    }>();
+    const emit = defineEmits(['update:place']);
+	const selected = ref(props.options.find(option => option.value === props.place) || props.options[0])
 
-	const props = withDefaults(defineProps<Props>(), {
-        place: ''
+    watch(() => props.place, (newVal) => {
+        selected.value = props.options.find(option => option.value === newVal) || props.options[0];
     });
 
-    const place = ref(props.place);
-
+    function updateValue(newValue: string | number) {
+        emit('update:place', newValue);
+    }
 	// const filterFn = (val: string | number, update: (callback: () => void) => void) => {
     //     update(() => {
     //         const needle = String(val).toLowerCase()
