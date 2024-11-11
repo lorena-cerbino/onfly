@@ -20,7 +20,7 @@
             />
 		</q-card-section>
         <q-card-actions align="right">
-            <q-btn unelevated rounded color="primary" label="Alterar busca" size="md" :loading="false" :disable="false" click="() => {}" class="q-mr-sm q-mb-sm" padding="sm lg" />
+            <q-btn unelevated rounded color="primary" label="Alterar busca" size="md" :loading="false" :disable="false" click="() => {}" class="q-mr-sm q-mb-sm" padding="sm xl" />
         </q-card-actions>
 	</q-card>
 </template>
@@ -56,6 +56,6 @@
 
 <style lang="scss">
     .container {
-        width: 90%;
+        width: 100%;
     }
 </style>
