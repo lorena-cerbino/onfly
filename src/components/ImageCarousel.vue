@@ -5,6 +5,7 @@
     class="container"
     height="250px"
     style="max-width: 360px;"
+    ref="carousel"
   >
     <q-carousel-slide
       v-for="(image, index) in images"
