@@ -5,7 +5,7 @@
         <img src="../assets/OnflyLogo.png" width="70px">
       </q-toolbar>
     </q-header>
-    <q-page-container>
+    <q-page-container class="flex justify-center">
       <router-view />
     </q-page-container>
   </q-layout>
