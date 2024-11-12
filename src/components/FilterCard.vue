@@ -1,5 +1,5 @@
 <template>
-	<q-card class="no-border bg-white container" flat bordered>
+	<q-card class="no-border bg-white filter" flat bordered>
 		<q-card-section>
             <span class="text-h5 text-grey-8">Reservar hotel</span>
 		</q-card-section>
@@ -67,7 +67,7 @@
 </script>
 
 <style lang="scss">
-    .container {
+    .filter {
         width: 100%;
     }
 </style>

@@ -33,13 +33,20 @@
 					map-options
 				/>
 			</div>
+			<q-infinite-scroll @load="onLoad" style="width: 100%;" class="column items-center justify-evenly q-gutter-sm">
+				<HotelCard
+					v-for="(hotel, index) in hotelOptions"
+					:key="index"
+					title="Hotels list"
+					:hotel="hotel"
+				></HotelCard>
+				<template v-slot:loading>
+					<div class="row justify-center q-my-md">
+						<q-spinner-dots color="primary" size="40px" />
+					</div>
+				</template>
+			</q-infinite-scroll>
 		</div>
-		<HotelCard
-			v-for="(hotel, index) in hotelOptions"
-			:key="index"
-			title="Hotels list"
-			:hotel="hotel"
-		></HotelCard>
 	</q-page>
 </template>
 
@@ -49,6 +56,7 @@
 	import places from '../../data/place.json'
 	import hotels from '../../data/hotel.json'
 	import FilterCard from 'components/FilterCard.vue'
+	import { Hotel } from 'components/models'
 
 	defineOptions({
 		name: 'IndexPage',
@@ -67,16 +75,32 @@
 
 	const placeOptions = getPlaces()
 
-	function getHotels(placeId: number | string) {
-		return hotels.reduce((acc, item) => String(item.placeId) === String(placeId) ? item.hotels : acc, {})
+	function getHotels(placeId: number | string, init: number) {
+		const hotelItems = hotels.reduce((acc, item) => String(item.placeId) === String(placeId) ? item.hotels : acc, {})
+		const someHotels = Object.keys(hotelItems).slice(0, init+5).reduce((acc: Hotel[], key: string) => {
+			acc[Number(key)] = hotelItems[key as keyof typeof hotelItems];
+			return acc;
+		}, [])
+		return someHotels
 	}
 
-	const hotelOptions = ref(getHotels(1))
+	const hotelOptions = ref(getHotels(1, 0))
 	const updateHotelOptions = () => {
-		hotelOptions.value = getHotels(place.value)
+		hotelOptions.value = getHotels(place.value, 0)
 	}
+
+	function onLoad (index: number, done: () => void) {
+		const counter = Object.keys(hotelOptions.value).length
+        setTimeout(() => {
+          hotelOptions.value = getHotels(place.value, counter)
+          done()
+        }, 2000)
+      }
 
 </script>
   
 <style>
+	.container {
+		width: 80%;
+	}
 </style>
