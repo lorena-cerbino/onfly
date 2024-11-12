@@ -1,5 +1,5 @@
 <template>
-	<q-page class="column items-center justify-evenly q-pa-xl container q-gutter-sm" >
+	<q-page class="column items-center q-pa-xl container q-gutter-sm" >
 		<FilterCard
 			:place="place"
 			:options="placeOptions"
@@ -34,18 +34,21 @@
 					map-options
 				/>
 			</div>
-			<q-infinite-scroll @load="onLoad" style="width: 100%;" class="column items-center justify-evenly q-gutter-sm">
+			<q-infinite-scroll @load="onLoad" style="width: 100%;" :infinite-scroll-disabled="hasNoData()" class="column items-center justify-evenly q-gutter-sm">
 				<HotelCard
 					v-for="(hotel, index) in hotelOptions"
 					:key="index"
 					title="Hotels list"
 					:hotel="hotel"
 				></HotelCard>
-				<template v-slot:loading>
+				<template v-if="!hasNoData()" v-slot:loading>
 					<div class="row justify-center q-my-md">
 						<q-spinner-dots color="primary" size="40px" />
 					</div>
 				</template>
+				<div v-if="hasNoData()" class="text-grey-8 text-caption q-gutter-xs items-center">
+					Não há mais dados para serem mostrados.
+				</div>
 			</q-infinite-scroll>
 		</div>
 	</q-page>
@@ -76,8 +79,12 @@
 
 	const placeOptions = getPlaces()
 
+	function getHotelsFromPlace (placeId: number | string) {
+		return hotels.reduce((acc, item) => String(item.placeId) === String(placeId) ? item.hotels : acc, {})
+	}
+
 	function getHotels(placeId: number | string, init: number) {
-		const hotelItems = hotels.reduce((acc, item) => String(item.placeId) === String(placeId) ? item.hotels : acc, {})
+		const hotelItems = getHotelsFromPlace(placeId)
 
 		const orderedHotels = Object.keys(hotelItems)
 			.sort((keyA, keyB) => {
@@ -87,7 +94,7 @@
 				else return parseFloat(b?.stars) - parseFloat(a?.stars)
 			}).map((key) => hotelItems[key as keyof typeof hotelItems])
 		
-		return orderedHotels.slice(0, init+5)
+		return orderedHotels.slice(0, init + 10)
 	}
 
 	const hotelOptions = ref(getHotels(1, 0))
@@ -103,8 +110,12 @@
 		}, 2000)
 	}
 
-	function handleOrder() {
+	function handleOrder () {
 		hotelOptions.value = getHotels(place.value, 0)
+	}
+	
+	function hasNoData () {
+		return hotelOptions.value.length === Object.keys(getHotelsFromPlace(place.value)).length
 	}
 
 </script>
