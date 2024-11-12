@@ -17,7 +17,7 @@
 				</template>
 				<q-breadcrumbs-el label="Início" />
 				<q-breadcrumbs-el label="Hotéis" />
-				<q-breadcrumbs-el :label="`Hospedagem em ${place}`" color="grey-8" />
+				<q-breadcrumbs-el :label="`Hospedagem em ${placeOptions.reduce((acc, p) => p.value === place ? p : acc, { label: '' }).label}`" color="grey-8" />
 			</q-breadcrumbs>
 			<div class="text-grey-8 text-caption row q-gutter-xs items-center">
 				Organizar por
