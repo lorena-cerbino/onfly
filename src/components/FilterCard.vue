@@ -16,7 +16,6 @@
                 use-input
                 hide-selected
                 fill-input
-                input-debounce="0"
                 :options="filteredOptions"
                 hide-dropdown-icon
                 option-value="value"
@@ -26,7 +25,7 @@
             />
 		</q-card-section>
         <q-card-actions align="right">
-            <q-btn unelevated rounded color="primary" label="Alterar busca" size="md" :loading="false" :disable="false" @click="btnAction" class="q-mr-sm q-mb-sm" padding="sm xl" />
+            <q-btn unelevated rounded color="primary" :label="btnLabel" size="md" :loading="false" :disable="false" @click="btnAction" class="q-mr-sm q-mb-sm" padding="sm xl" />
         </q-card-actions>
 	</q-card>
 </template>
@@ -40,10 +39,12 @@
     }
 
 	const props = defineProps<{
-        place: string | number;
+        place?: string | number;
         options: Option[];
+        btnLabel?: string;
         btnAction?: () => void;
     }>();
+    
     const emit = defineEmits(['update:place']);
 	const selected = ref(props.options.find(option => option.value === props.place) || props.options[0])
 
