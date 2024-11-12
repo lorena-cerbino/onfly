@@ -17,7 +17,7 @@
 				</template>
 				<q-breadcrumbs-el label="Início" />
 				<q-breadcrumbs-el label="Hotéis" />
-				<q-breadcrumbs-el :label="`Hospedagem em ${placeOptions.reduce((acc, p) => p.value === place ? p : acc, { label: '' }).label}`" color="grey-8" />
+				<q-breadcrumbs-el :label="`Hospedagem em ${selectedPlace.city}`" color="grey-8" />
 			</q-breadcrumbs>
 			<div class="text-grey-8 text-caption row q-gutter-xs items-center">
 				Organizar por
@@ -67,12 +67,16 @@
 	});
 
 	const place = ref<string | number>(1)
+	const selectedPlace = ref<{ value: number | string; city: string ; [key: string]: unknown }>({ value: '', city: '' })
+	
 	const order = ref('Recomendados');
 	const orderOptions = ['Recomendados', 'Melhor avaliados']
 
 	function getPlaces() {
 		return places.map((place) => ({
-			label: `${place.name}, ${place.state.shortname}`,
+			label: `${place.name}, ${place.state.name}`,
+			shortLabel: `${place.name}, ${place.state.shortname}`,
+			city: place.name,
 			value: place.placeId
 		}))
 	}
@@ -99,6 +103,7 @@
 
 	const hotelOptions = ref(getHotels(1, 0))
 	const updateHotelOptions = () => {
+		selectedPlace.value = placeOptions.reduce((acc, p) => p.value === place.value ? p : acc, { value: 0, city: '' })
 		hotelOptions.value = getHotels(place.value, 0)
 	}
 
