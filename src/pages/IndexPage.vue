@@ -28,6 +28,7 @@
 					stack-label
 					class="q-py-none q-mb-xs"
 					:options="orderOptions"
+					@update:model-value="handleOrder"
 					dropdown-icon="keyboard_arrow_down"
 					emit-value
 					map-options
@@ -77,11 +78,16 @@
 
 	function getHotels(placeId: number | string, init: number) {
 		const hotelItems = hotels.reduce((acc, item) => String(item.placeId) === String(placeId) ? item.hotels : acc, {})
-		const someHotels = Object.keys(hotelItems).slice(0, init+5).reduce((acc: Hotel[], key: string) => {
-			acc[Number(key)] = hotelItems[key as keyof typeof hotelItems];
-			return acc;
-		}, [])
-		return someHotels
+
+		const orderedHotels = Object.keys(hotelItems)
+			.sort((keyA, keyB) => {
+				const a = hotelItems[keyA as keyof typeof hotelItems] as Hotel
+				const b = hotelItems[keyB as keyof typeof hotelItems] as Hotel
+				if (order.value === 'Recomendados') return a?.price - b?.price
+				else return parseFloat(b?.stars) - parseFloat(a?.stars)
+			}).map((key) => hotelItems[key as keyof typeof hotelItems])
+		
+		return orderedHotels.slice(0, init+5)
 	}
 
 	const hotelOptions = ref(getHotels(1, 0))
@@ -91,11 +97,15 @@
 
 	function onLoad (index: number, done: () => void) {
 		const counter = Object.keys(hotelOptions.value).length
-        setTimeout(() => {
-          hotelOptions.value = getHotels(place.value, counter)
-          done()
-        }, 2000)
-      }
+		setTimeout(() => {
+			hotelOptions.value = getHotels(place.value, counter)
+			done()
+		}, 2000)
+	}
+
+	function handleOrder() {
+		hotelOptions.value = getHotels(place.value, 0)
+	}
 
 </script>
   
