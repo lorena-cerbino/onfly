@@ -1,4 +1,24 @@
 <template>
+	<div v-if="drawer" class="bg-black absolute" style="width: 100vw; height: 100%; z-index: 4; opacity: 0.4; top: 0" @click="handleHotelSelect(emptyHotel)" />
+	<q-drawer
+		side="right"
+		v-model="drawer"
+		show-if-above
+		bordered
+		overlay
+		:width="screenWidth * 0.7"
+		:breakpoint="500"
+	>
+		<q-scroll-area class="fit">
+			<div class="bg-white q-px-md q-py-sm" style="height: 100vh;">
+				<HotelDetails
+					title="Hotels list"
+					:hotel="selectedHotel"
+					:handleHotelSelect="handleHotelSelect"
+				/>
+			</div>
+		</q-scroll-area>
+	</q-drawer>
 	<q-page class="column items-center q-pa-xl container q-gutter-sm" >
 		<FilterCard
 			:place="place"
@@ -37,7 +57,7 @@
 					<template v-slot:prepend>
 						<q-item
 							class="bg-grey-3"
-							:style="{ color: order ? '#009EFB' : '', position: 'absolute', top: '-3px', left: '2px', zIndex: 10, fontSize: 'small', fontStyle: 'italic', fontWeight: 'bold', padding: 0, display: 'flex', alignItems: 'center', width: 'max-content' }">
+							:style="{ color: order ? '#009EFB' : '', position: 'absolute', top: '-3px', left: '2px', zIndex: 3, fontSize: 'small', fontStyle: 'italic', fontWeight: 'bold', padding: 0, display: 'flex', alignItems: 'center', width: 'max-content' }">
 							{{ order }}
 							<q-icon name="keyboard_arrow_down" color="blue" size="24px" right />
 						</q-item>
@@ -50,6 +70,7 @@
 					:key="index"
 					title="Hotels list"
 					:hotel="hotel"
+					:handleHotelSelect="handleHotelSelect"
 				></HotelCard>
 				<template v-if="!hasNoData()" v-slot:loading>
 					<div class="row justify-center q-my-md">
@@ -65,76 +86,70 @@
 </template>
 
 <script setup lang="ts">
-    import { ref } from 'vue'
-	import HotelCard from 'components/HotelCard.vue';
-	import places from '../../data/place.json'
-	import hotels from '../../data/hotel.json'
-	import FilterCard from 'components/FilterCard.vue'
+	import { ref, nextTick, onMounted } from 'vue'
 	import { Hotel } from 'components/models'
+	import HotelCard from 'components/HotelCard.vue'
+	import FilterCard from 'components/FilterCard.vue'
+	import HotelDetails from 'components/HotelDetails.vue'
+
+	import {
+		place,
+		placeOptions,
+		selectedPlace,
+		updateHotelOptions,
+		order,
+		orderOptions,
+		handleOrder,
+		onLoad,
+		hasNoData,
+		hotelOptions,
+	} from '../scripts/listing'
 
 	defineOptions({
 		name: 'IndexPage',
 	});
 
-	const place = ref<string | number>(0)
-	const placeOptions = getPlaces()
-	const selectedPlace = ref<{ value: number | string; city: string ; [key: string]: unknown }>({ value: 0, city: '' })
-	
-	function getPlaces() {
-		return places.reduce((acc, place) => ([
-			...acc,
-			{
-				label: `${place.name}, ${place.state.name}`,
-				shortLabel: `${place.name}, ${place.state.shortname}`,
-				city: place.name,
-				value: place.placeId
-			}
-		]), [{ label: '', shortLabel: '', city: '', value: 0 }])
+	const drawer = ref(false)
+	nextTick(() => {
+		drawer.value = false
+	})
+
+	const screenWidth = ref(0);
+
+	onMounted(() => {
+		screenWidth.value = window.innerWidth;
+	})
+
+	const emptyHotel = {
+		id: 0,
+		favorite: false,
+		name: '',
+		description: '',
+		stars: '',
+		thumb: '',
+		amenities: [],
+		hasBreakFast: false,
+		hasRefundableRoom: false,
+		hasAgreement: false,
+		address: {
+			street: '',
+			number: '',
+			district: '',
+			city: '',
+			state: '',
+			country: '',
+		},
+		images: [],
+		roomsQuantity: 0,
+		price: 0,
+	}
+	const selectedHotel = ref<Hotel>(emptyHotel)
+	const handleHotelSelect = (hotel: Hotel) => {
+		drawer.value = !drawer.value
+		selectedHotel.value = hotel
+		document.body.style.overflow = drawer.value? 'hidden' : ''
 	}
 
-	const order = ref('Recomendados');
-	const orderOptions = ['Recomendados', 'Melhor avaliados']
-	
-	function handleOrder () {
-		hotelOptions.value = getHotels(place.value, 0)
-	}
-
-	const hotelOptions = ref(getHotels(1, 0))
-
-	function getHotelsFromPlace (placeId: number | string) {
-		return hotels.reduce((acc, item) => String(item.placeId) === String(placeId) ? item.hotels : acc, {})
-	}
-
-	function getHotels(placeId: number | string, init: number) {
-		const hotelItems = getHotelsFromPlace(placeId)
-
-		const orderedHotels = Object.keys(hotelItems)
-			.sort((keyA, keyB) => {
-				const a = hotelItems[keyA as keyof typeof hotelItems] as Hotel
-				const b = hotelItems[keyB as keyof typeof hotelItems] as Hotel
-				if (order.value === 'Recomendados') return a?.price - b?.price
-				else return parseFloat(b?.stars) - parseFloat(a?.stars)
-			}).map((key) => hotelItems[key as keyof typeof hotelItems])
-		
-		return orderedHotels.slice(0, init + 10)
-	}
-
-	const updateHotelOptions = () => {
-		selectedPlace.value = placeOptions.reduce((acc, p) => p.value === place.value ? p : acc, { value: 0, city: '' })
-		hotelOptions.value = getHotels(place.value, 0)
-	}
-
-	function hasNoData () {
-		return hotelOptions.value.length === Object.keys(getHotelsFromPlace(place.value)).length
-	}
-
-	function onLoad (index: number, done: () => void) {
-		const counter = Object.keys(hotelOptions.value).length
-		setTimeout(() => {
-			hotelOptions.value = getHotels(place.value, counter)
-			done()
-		}, 2000)
-	}
 </script>
   
 <style>
