@@ -20,13 +20,15 @@
 		</q-scroll-area>
 	</q-drawer>
 	<q-page class="column items-center q-pa-xl container q-gutter-sm" >
-		<FilterCard
+		<filter-card
 			:place="place"
+			:name="name"
 			:options="placeOptions"
 			@update:place="(p) => place = p.value"
+			@update:name="(n: string) => name = n"
 			:btnLabel="selectedPlace.value !== 0 ? 'Alterar busca' : 'Buscar'"
 			:btnAction="updateHotelOptions"
-		></FilterCard>
+		></filter-card>
 		<div style="width: 100%;" class="row justify-between items-center" v-if="selectedPlace.value !== 0">
 			<q-breadcrumbs class="text-grey-8 text-caption" style="font-size: 12px;">
 				<template v-slot:separator>
@@ -64,7 +66,7 @@
 					</template>
 				</q-select>
 			</div>
-			<q-infinite-scroll @load="onLoad" style="width: 100%;" :infinite-scroll-disabled="hasNoData()" class="column items-center justify-evenly q-gutter-sm">
+			<q-infinite-scroll @load="onLoad" style="width: 100%;" :infinite-scroll-disabled="hasNoData" class="column items-center justify-evenly q-gutter-sm">
 				<HotelCard
 					v-for="(hotel, index) in hotelOptions"
 					:key="index"
@@ -72,12 +74,12 @@
 					:hotel="hotel"
 					:handleHotelSelect="handleHotelSelect"
 				></HotelCard>
-				<template v-if="!hasNoData()" v-slot:loading>
+				<template v-if="!hasNoData" v-slot:loading>
 					<div class="row justify-center q-my-md">
 						<q-spinner-dots color="primary" size="40px" />
 					</div>
 				</template>
-				<div v-if="hasNoData()" class="text-grey-8 text-caption q-gutter-xs items-center">
+				<div v-if="hasNoData" class="text-grey-8 text-caption q-gutter-xs items-center">
 					Não há mais dados para serem mostrados.
 				</div>
 			</q-infinite-scroll>
@@ -94,6 +96,7 @@
 
 	import {
 		place,
+		name,
 		placeOptions,
 		selectedPlace,
 		updateHotelOptions,
