@@ -11,7 +11,7 @@
 	>
 		<q-scroll-area class="fit">
 			<div class="bg-white q-px-md q-py-sm" style="height: 100vh;">
-				<HotelDetails
+				<hotel-details
 					title="Hotels list"
 					:hotel="selectedHotel"
 					:handleHotelSelect="handleHotelSelect"
@@ -67,13 +67,13 @@
 				</q-select>
 			</div>
 			<q-infinite-scroll @load="onLoad" style="width: 100%;" :infinite-scroll-disabled="hasNoData" class="column items-center justify-evenly q-gutter-sm">
-				<HotelCard
+				<hotel-card
 					v-for="(hotel, index) in hotelOptions"
 					:key="index"
 					title="Hotels list"
 					:hotel="hotel"
 					:handleHotelSelect="handleHotelSelect"
-				></HotelCard>
+				></hotel-card>
 				<template v-if="!hasNoData" v-slot:loading>
 					<div class="row justify-center q-my-md">
 						<q-spinner-dots color="primary" size="40px" />
