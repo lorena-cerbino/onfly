@@ -30,18 +30,36 @@ const getHotelsFromPlace = (placeId: number | string) => {
     return hotels.reduce((acc, item) => String(item.placeId) === String(placeId) ? item.hotels : acc, {})
 }
 
+const name = ref('')
+const getFilteredHotels = (placeId: number | string) => {
+    const hotelItems = getHotelsFromPlace(placeId)
+
+    return Object.keys(hotelItems)
+        .filter((key) => {
+            const item: { [key: string]: Hotel } = hotelItems[key as keyof typeof hotelItems]
+            if (String(item.name).toLowerCase().includes(name.value.toLowerCase())) return key
+        })
+}
+
+const hasNoData = ref(false)
+
 const getHotels = (placeId: number | string, init: number) => {
     const hotelItems = getHotelsFromPlace(placeId)
 
-    const orderedHotels = Object.keys(hotelItems)
+    const filteredHotels = getFilteredHotels(placeId)
+        
+    const orderedHotels = filteredHotels
         .sort((keyA, keyB) => {
             const a = hotelItems[keyA as keyof typeof hotelItems] as Hotel
             const b = hotelItems[keyB as keyof typeof hotelItems] as Hotel
             if (order.value === 'Recomendados') return a?.price - b?.price
             else return parseFloat(b?.stars) - parseFloat(a?.stars)
         }).map((key) => hotelItems[key as keyof typeof hotelItems])
-    
-    return orderedHotels.slice(0, init + 10)
+        
+    const hotels = orderedHotels.slice(0, init + 10)
+    hasNoData.value = hotels.length === Object.keys(getFilteredHotels(place.value)).length
+
+    return hotels
 }
 
 const hotelOptions = ref(getHotels(1, 0))
@@ -51,11 +69,8 @@ const updateHotelOptions = () => {
     hotelOptions.value = getHotels(place.value, 0)
 }
 
-const hasNoData = () => {
-    return hotelOptions.value.length === Object.keys(getHotelsFromPlace(place.value)).length
-}
-
-const onLoad = (index: number, done: () => void) => {
+const onLoad = (_: number, done: () => void) => {
+    if (hasNoData.value) return
     const counter = Object.keys(hotelOptions.value).length
     setTimeout(() => {
         hotelOptions.value = getHotels(place.value, counter)
@@ -65,6 +80,7 @@ const onLoad = (index: number, done: () => void) => {
 
 export {
     place,
+    name,
     placeOptions,
     selectedPlace,
     order,
