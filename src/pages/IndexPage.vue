@@ -8,7 +8,6 @@
 		overlay
 		:width="screenWidth * 0.7"
 		:breakpoint="500"
-		:class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-3'"
 	>
 		<q-scroll-area class="fit">
 			<div class="bg-white q-px-md q-py-sm" style="height: 100vh;">

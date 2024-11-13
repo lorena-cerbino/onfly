@@ -31,8 +31,10 @@
         <q-separator color="grey" />
     </div>
 
-    <div class="text-h6 text-grey-8 text-weight-regular q-py-sm">Conheça um pouco mais</div>
-    <div class="text-body2 text-grey text-weight-regular">{{ hotel?.description }}</div>
+    <div class="q-pb-xs">
+        <div class="text-h6 text-grey-8 text-weight-regular q-py-sm">Conheça um pouco mais</div>
+        <div v-html="hotel.description" class="text-body2 text-grey text-weight-regular q-mb-xl" />
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -63,7 +65,6 @@
 	const handleClick = () => {
 		showMore.value = !showMore.value
 	}
-	
 </script>
 
 <style lang="scss">
