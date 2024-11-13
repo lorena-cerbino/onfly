@@ -12,9 +12,9 @@
         </span>
     </div>
 
-    <image-carousel :images="hotel?.images" />
+    <image-carousel :images="hotel?.images" width="100%" height="300px" style="border-radius: 8px;" showCounter />
     
-    <div class="text-h6 text-grey-8 text-weight-regular q-py-sm">Facilidades do hotel</div>
+    <div class="text-h6 text-grey-8 text-weight-regular q-pt-md q-pb-sm">Facilidades do hotel</div>
     <q-separator color="grey" />
     <div class="row items-center q-gutter-sm justify-between q-py-lg q-gutter-sm">
         <div v-for="amenity in getAmenities(hotel)" :key="amenity.key">
@@ -35,8 +35,12 @@
 
 <script setup lang="ts">
 	import { Hotel } from './models';
-	import amenities from '../../data/amenities.json';
 	import ImageCarousel from './ImageCarousel.vue'
+
+    import {
+		hasAmenity,
+		getAmenities,
+	} from '../scripts/hotel'
 
 	interface Props {
 		title: string;
@@ -45,16 +49,6 @@
 	};
 
 	const props = defineProps<Props>();
-
-	const hasAmenity = (key: string, hotel?: Hotel) => {
-		return hotel?.amenities?.find((amenity: {key: string; label: string}) => amenity.key === key)
-	}
-	
-	const getAmenities = (hotel: Hotel) => {
-		return amenities.filter(amenity =>
-            hotel?.amenities?.some(hotelAmenity => hotelAmenity.key === amenity.key)
-        )
-	}
 
 	const handleClick = () => {
 		props.handleHotelSelect(props.hotel)
