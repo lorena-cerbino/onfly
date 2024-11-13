@@ -1,5 +1,25 @@
 <template>
 	<q-page class="column items-center q-pa-xl container q-gutter-sm" >
+		<q-drawer
+			side="right"
+			v-model="drawer"
+			show-if-above
+			bordered
+			overlay
+			:width="screenWidth * 0.7"
+			:breakpoint="500"
+			:class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-3'"
+		>
+			<q-scroll-area class="fit">
+				<div class="bg-white q-px-md q-py-sm" style="height: 100vh;">
+					<HotelDetails
+						title="Hotels list"
+						:hotel="selectedHotel"
+						:handleHotelSelect="handleHotelSelect"
+					/>
+				</div>
+			</q-scroll-area>
+		</q-drawer>
 		<FilterCard
 			:place="place"
 			:options="placeOptions"
@@ -50,6 +70,7 @@
 					:key="index"
 					title="Hotels list"
 					:hotel="hotel"
+					:handleHotelSelect="handleHotelSelect"
 				></HotelCard>
 				<template v-if="!hasNoData()" v-slot:loading>
 					<div class="row justify-center q-my-md">
@@ -65,8 +86,11 @@
 </template>
 
 <script setup lang="ts">
-	import HotelCard from 'components/HotelCard.vue';
+	import { ref, nextTick, onMounted } from 'vue'
+	import { Hotel } from 'components/models'
+	import HotelCard from 'components/HotelCard.vue'
 	import FilterCard from 'components/FilterCard.vue'
+	import HotelDetails from 'components/HotelDetails.vue'
 
 	import {
 		place,
@@ -79,12 +103,29 @@
 		onLoad,
 		hasNoData,
 		hotelOptions,
-		
 	} from '../scripts/listing'
 
 	defineOptions({
 		name: 'IndexPage',
 	});
+
+	const drawer = ref(false)
+	nextTick(() => {
+		drawer.value = false
+	})
+
+	const screenWidth = ref(0);
+
+	onMounted(() => {
+		screenWidth.value = window.innerWidth;
+	})
+
+	const selectedHotel = ref<Hotel>({})
+	const handleHotelSelect = (hotel: Hotel) => {
+		drawer.value = !drawer.value
+		selectedHotel.value = hotel
+	}
+
 </script>
   
 <style>
