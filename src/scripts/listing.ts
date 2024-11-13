@@ -46,7 +46,6 @@ const getHotels = (placeId: number | string, init: number) => {
 
 const hotelOptions = ref(getHotels(1, 0))
 
-
 const updateHotelOptions = () => {
     selectedPlace.value = placeOptions.reduce((acc, p) => p.value === place.value ? p : acc, { value: 0, city: '' })
     hotelOptions.value = getHotels(place.value, 0)

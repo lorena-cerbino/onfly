@@ -7,13 +7,13 @@
 				<span class="text-body2 text-grey q-mb-xs">
 					{{ hotel?.address?.fullAddress }}
 				</span>
-				<div class="row no-wrap items-center">
-					<div class="text-caption text-grey" style="margin-bottom: -2px;">{{ hotel?.stars }}</div>
+				<div class="row no-wrap items-center q-gutter-xs">
+					<div class="text-caption text-grey" style="margin-bottom: -2px;">{{ parseFloat(hotel?.stars || '0')?.toFixed(1) }}</div>
 					<div v-if="hotel">
-						<q-rating size="xs" :model-value="Number(hotel?.stars) || 0" :max="5" color="yellow" />
+						<q-rating size="12px" :model-value="Number(hotel?.stars) || 0" :max="5" color="yellow" />
 					</div>
 					<q-separator vertical color="grey" class="q-mr-sm q-ml-sm" />
-					<div v-for="amenity in getAmenities()" :key="amenity.key">
+					<div v-for="amenity in getAmenities(hotel)" :key="amenity.key">
 						<q-icon v-if="hasAmenity(amenity.key, hotel)" :name="amenity.icon" color="grey" />
 					</div>
 				</div>
@@ -36,7 +36,7 @@
 					<span class="text-caption text-grey q-mb-xs">
 						Impostos inclusos
 					</span>
-					<q-btn unelevated rounded color="primary" padding="sm xl"  class="q-mt-xl" label="Selecionar" size="md" :loading="false" :disable="false" click="() => {}" />
+					<q-btn unelevated rounded style="background-color: #009EFB; color: white;" padding="sm xl"  class="q-mt-xl" label="Selecionar" size="md" :loading="false" :disable="false" @click="handleClick" />
 				</div>
 			</q-card-section>
 		</q-card-section>
@@ -50,19 +50,26 @@
 
 	interface Props {
 		title: string;
-		hotel?: Hotel;
+		hotel: Hotel;
+		handleHotelSelect: (hotel: Hotel) => void
 	};
 
-	withDefaults(defineProps<Props>(), {
-	});
+	const props = defineProps<Props>();
 
-	function hasAmenity(key: string, hotel?: Hotel) {
+	const hasAmenity = (key: string, hotel?: Hotel) => {
 		return hotel?.amenities?.find((amenity: {key: string; label: string}) => amenity.key === key)
 	}
 	
-	function getAmenities() {
-		return amenities
+	const getAmenities = (hotel: Hotel) => {
+		return amenities.filter(amenity =>
+            hotel?.amenities?.some(hotelAmenity => hotelAmenity.key === amenity.key)
+        )
 	}
+
+	const handleClick = () => {
+		props.handleHotelSelect(props.hotel)
+	}
+	
 </script>
 
 <style lang="scss">

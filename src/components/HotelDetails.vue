@@ -52,7 +52,7 @@
 	
 	const getAmenities = (hotel: Hotel) => {
 		return amenities.filter(amenity =>
-            hotel.amenities.some(hotelAmenity => hotelAmenity.key === amenity.key)
+            hotel?.amenities?.some(hotelAmenity => hotelAmenity.key === amenity.key)
         )
 	}
 

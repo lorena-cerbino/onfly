@@ -1,25 +1,26 @@
 <template>
+	<div v-if="drawer" class="bg-black absolute" style="width: 100vw; height: 100%; z-index: 4; opacity: 0.4; top: 0" @click="handleHotelSelect(emptyHotel)" />
+	<q-drawer
+		side="right"
+		v-model="drawer"
+		show-if-above
+		bordered
+		overlay
+		:width="screenWidth * 0.7"
+		:breakpoint="500"
+		:class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-3'"
+	>
+		<q-scroll-area class="fit">
+			<div class="bg-white q-px-md q-py-sm" style="height: 100vh;">
+				<HotelDetails
+					title="Hotels list"
+					:hotel="selectedHotel"
+					:handleHotelSelect="handleHotelSelect"
+				/>
+			</div>
+		</q-scroll-area>
+	</q-drawer>
 	<q-page class="column items-center q-pa-xl container q-gutter-sm" >
-		<q-drawer
-			side="right"
-			v-model="drawer"
-			show-if-above
-			bordered
-			overlay
-			:width="screenWidth * 0.7"
-			:breakpoint="500"
-			:class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-3'"
-		>
-			<q-scroll-area class="fit">
-				<div class="bg-white q-px-md q-py-sm" style="height: 100vh;">
-					<HotelDetails
-						title="Hotels list"
-						:hotel="selectedHotel"
-						:handleHotelSelect="handleHotelSelect"
-					/>
-				</div>
-			</q-scroll-area>
-		</q-drawer>
 		<FilterCard
 			:place="place"
 			:options="placeOptions"
@@ -57,7 +58,7 @@
 					<template v-slot:prepend>
 						<q-item
 							class="bg-grey-3"
-							:style="{ color: order ? '#009EFB' : '', position: 'absolute', top: '-3px', left: '2px', zIndex: 10, fontSize: 'small', fontStyle: 'italic', fontWeight: 'bold', padding: 0, display: 'flex', alignItems: 'center', width: 'max-content' }">
+							:style="{ color: order ? '#009EFB' : '', position: 'absolute', top: '-3px', left: '2px', zIndex: 3, fontSize: 'small', fontStyle: 'italic', fontWeight: 'bold', padding: 0, display: 'flex', alignItems: 'center', width: 'max-content' }">
 							{{ order }}
 							<q-icon name="keyboard_arrow_down" color="blue" size="24px" right />
 						</q-item>
@@ -120,7 +121,7 @@
 		screenWidth.value = window.innerWidth;
 	})
 
-	const selectedHotel = ref<Hotel>({
+	const emptyHotel = {
 		id: 0,
 		favorite: false,
 		name: '',
@@ -142,10 +143,12 @@
 		images: [],
 		roomsQuantity: 0,
 		price: 0,
-	})
+	}
+	const selectedHotel = ref<Hotel>(emptyHotel)
 	const handleHotelSelect = (hotel: Hotel) => {
 		drawer.value = !drawer.value
 		selectedHotel.value = hotel
+		document.body.style.overflow = drawer.value? 'hidden' : ''
 	}
 
 </script>
