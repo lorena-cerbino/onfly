@@ -120,7 +120,29 @@
 		screenWidth.value = window.innerWidth;
 	})
 
-	const selectedHotel = ref<Hotel>({})
+	const selectedHotel = ref<Hotel>({
+		id: 0,
+		favorite: false,
+		name: '',
+		description: '',
+		stars: '',
+		thumb: '',
+		amenities: [],
+		hasBreakFast: false,
+		hasRefundableRoom: false,
+		hasAgreement: false,
+		address: {
+			street: '',
+			number: '',
+			district: '',
+			city: '',
+			state: '',
+			country: '',
+		},
+		images: [],
+		roomsQuantity: 0,
+		price: 0,
+	})
 	const handleHotelSelect = (hotel: Hotel) => {
 		drawer.value = !drawer.value
 		selectedHotel.value = hotel
