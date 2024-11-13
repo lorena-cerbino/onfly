@@ -12,7 +12,7 @@
 					<div v-if="hotel">
 						<q-rating size="12px" :model-value="Number(hotel?.stars) || 0" :max="5" color="yellow" />
 					</div>
-					<q-separator vertical color="grey" class="q-mr-sm q-ml-sm" />
+					<q-separator v-if="hotel?.amenities?.length !== 0" vertical color="grey" class="q-mr-sm q-ml-sm" />
 					<div v-for="amenity in getAmenities(hotel)" :key="amenity.key">
 						<q-icon v-if="hasAmenity(amenity.key, hotel)" :name="amenity.icon" color="grey" />
 					</div>
