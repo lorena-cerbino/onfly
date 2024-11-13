@@ -45,8 +45,12 @@
 
 <script setup lang="ts">
 	import { Hotel } from './models';
-	import amenities from '../../data/amenities.json';
 	import ImageCarousel from './ImageCarousel.vue'
+
+	import {
+		hasAmenity,
+		getAmenities,
+	} from '../scripts/hotel'
 
 	interface Props {
 		title: string;
@@ -54,22 +58,11 @@
 		handleHotelSelect: (hotel: Hotel) => void
 	};
 
-	const props = defineProps<Props>();
-
-	const hasAmenity = (key: string, hotel?: Hotel) => {
-		return hotel?.amenities?.find((amenity: {key: string; label: string}) => amenity.key === key)
-	}
-	
-	const getAmenities = (hotel: Hotel) => {
-		return amenities.filter(amenity =>
-            hotel?.amenities?.some(hotelAmenity => hotelAmenity.key === amenity.key)
-        )
-	}
+	const props = defineProps<Props>()
 
 	const handleClick = () => {
-		props.handleHotelSelect(props.hotel)
+    	props.handleHotelSelect(props.hotel)
 	}
-	
 </script>
 
 <style lang="scss">

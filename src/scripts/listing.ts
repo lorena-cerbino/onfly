@@ -3,11 +3,7 @@ import places from '../../data/place.json'
 import hotels from '../../data/hotel.json'
 import { Hotel } from 'components/models'
 
-const place = ref<string | number>(0)
-const placeOptions = getPlaces()
-const selectedPlace = ref<{ value: number | string; city: string ; [key: string]: unknown }>({ value: 0, city: '' })
-
-function getPlaces() {
+const getPlaces = () => {
     return places.reduce((acc, place) => ([
         ...acc,
         {
@@ -18,6 +14,10 @@ function getPlaces() {
         }
     ]), [{ label: '', shortLabel: '', city: '', value: 0 }])
 }
+
+const place = ref<string | number>(0)
+const placeOptions = getPlaces()
+const selectedPlace = ref<{ value: number | string; city: string ; [key: string]: unknown }>({ value: 0, city: '' })
 
 const order = ref('Recomendados');
 const orderOptions = ['Recomendados', 'Melhor avaliados']
